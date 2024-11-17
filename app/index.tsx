@@ -1,3 +1,4 @@
+import { router } from "expo-router";
 import { StyleSheet, Text, View } from "react-native";
 
 const IndexPage = () => {
@@ -5,7 +6,14 @@ const IndexPage = () => {
     <View style={styles.container}>
       <View style={styles.main}>
         <Text style={styles.title}>Hello World</Text>
-        <Text style={styles.subtitle}>This is the first page of your app.</Text>
+        <Text
+          style={styles.subtitle}
+          onPress={() => {
+            router.push("welcome");
+          }}
+        >
+          This is the first page of your app. CLICK HERE
+        </Text>
       </View>
     </View>
   );
