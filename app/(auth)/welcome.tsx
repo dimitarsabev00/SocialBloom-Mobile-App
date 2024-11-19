@@ -1,14 +1,13 @@
 import { View, Text, StyleSheet, Image, Pressable } from "react-native";
 import React from "react";
-import ScreenWrapper from "../components/ScreenWrapper";
+import ScreenWrapper from "../../components/ScreenWrapper";
 import { StatusBar } from "expo-status-bar";
-import { hp, wp } from "../helpers/common";
-import { theme } from "../constants/theme";
-import { useRouter } from "expo-router";
-import CustomButton from '../components/CustomButton';
+import { hp, wp } from "../../helpers/common";
+import { theme } from "../../constants/theme";
+import { router } from "expo-router";
+import CustomButton from "../../components/CustomButton";
 
 const WelcomePage = () => {
-  const router = useRouter();
   return (
     <ScreenWrapper bg={"white"}>
       <StatusBar style="dark" />
@@ -17,7 +16,7 @@ const WelcomePage = () => {
         <Image
           style={styles.welcomeImage}
           resizeMode="contain"
-          source={require("../assets/images/welcome.png")}
+          source={require("../../assets/images/welcome.png")}
         />
 
         {/* title */}
@@ -29,14 +28,14 @@ const WelcomePage = () => {
         </View>
 
         <View style={styles.footer}>
-          <CustomButton 
-            title="Getting Started" 
-            buttonStyle={{marginHorizontal: wp(3)}} 
-            // onPress={()=> router.push('signUp')}
+          <CustomButton
+            title="Getting Started"
+            buttonStyle={{ marginHorizontal: wp(3) }}
+            onPress={() => router.push("/(auth)/signUp")}
           />
           <View style={styles.bottomTextContainer}>
             <Text style={styles.loginText}>Already have an account!</Text>
-            <Pressable onPress={() => router.push("/login")}>
+            <Pressable onPress={() => router.push("/(auth)/login")}>
               <Text
                 style={[
                   styles.loginText,
