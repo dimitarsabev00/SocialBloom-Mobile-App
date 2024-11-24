@@ -11,6 +11,7 @@ const MainLayout = () => {
       <Stack.Screen name="newPost" />
       <Stack.Screen name="notifications" />
       <Stack.Screen name="profile" />
+      <Stack.Screen name="editProfile" />
     </Stack>
   );
 };
