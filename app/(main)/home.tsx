@@ -37,6 +37,7 @@ const HomeScreen = () => {
               />
             </Pressable>
             <Pressable onPress={() => router.push("/(main)/profile")}>
+              {/* Icon For User & Open User Profile From Icon  */}
               {/* <Icon
                 name="user"
                 size={hp(3.2)}
