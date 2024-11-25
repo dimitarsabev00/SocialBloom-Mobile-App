@@ -4,8 +4,8 @@ import { theme } from "../constants/theme";
 import Icon from "../assets/icons";
 
 interface BackButtonProps {
-  router: { back: () => void }; // Define the expected shape of the `router` prop
-  size?: number; // Optional size prop
+  router: { back: () => void };
+  size?: number; 
 }
 
 const BackButton: React.FC<BackButtonProps> = ({ router, size = 26 }) => {

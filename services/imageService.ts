@@ -22,12 +22,10 @@ export const uploadFile = async (
         contentType: isImage ? "image/*" : "video/*",
       });
     if (error) {
-      console.log("file upload error: ", error);
       return { success: false, msg: "Could not upload media" };
     }
     return { success: true, data: data.path };
   } catch (error) {
-    console.log("file upload error: ", error);
     return { success: false, msg: "Could not upload media" };
   }
 };
@@ -54,7 +52,6 @@ export const getSupabaseFileUrl = (filePath: string) => {
 
 export const downloadFile = async (url: string) => {
   try {
-    // Start the download
     const { uri } = await FileSystem.downloadAsync(url, getLocalFilePath(url));
     return uri;
   } catch (e) {

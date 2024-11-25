@@ -3,8 +3,8 @@ import React from "react";
 import { theme } from "../constants/theme";
 
 type LoadingProps = {
-  size?: ActivityIndicatorProps['size']; // Accept 'small' | 'large' (or a number, but that's platform-specific)
-  color?: string; // Color of the ActivityIndicator
+  size?: ActivityIndicatorProps['size'];
+  color?: string; 
 };
 
 const Loading: React.FC<LoadingProps> = ({

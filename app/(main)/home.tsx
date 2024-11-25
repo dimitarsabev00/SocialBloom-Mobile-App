@@ -1,10 +1,4 @@
-import {
-  View,
-  Text,
-  StyleSheet,
-  Pressable,
-  FlatList,
-} from "react-native";
+import { View, Text, StyleSheet, Pressable, FlatList } from "react-native";
 import React, { useEffect, useState } from "react";
 import ScreenWrapper from "../../components/ScreenWrapper";
 import { supabase } from "../../lib/supabase";
@@ -12,31 +6,61 @@ import { useAuth } from "../../contexts/AuthContext";
 import { theme } from "../../constants/theme";
 import Icon from "../../assets/icons";
 import { hp, wp } from "../../helpers/common";
-import { useRouter } from "expo-router";
+import { router } from "expo-router";
 import { fetchPosts } from "../../services/postService";
 import PostCard from "../../components/PostCard";
+import Loading from "../../components/Loading";
 import { getUserData } from "../../services/userService";
 import Avatar from "../../components/Avatar";
 
+var limit = 0;
+
 const HomeScreen = () => {
   const { user } = useAuth();
-  const router = useRouter();
   const [posts, setPosts] = useState([]);
+  const [hasMore, setHasMore] = useState(true);
+  const [notificationCount, setNotificationCount] = useState(0);
 
   const handlePostEvent = async (payload) => {
-    console.log("got post event: ", payload);
     if (payload.eventType == "INSERT" && payload?.new?.id) {
       let newPost = { ...payload.new };
       let res = await getUserData(newPost.userId);
       newPost.user = res.success ? res.data : {};
-      newPost.postLikes = []; // while adding likes
-      newPost.comments = [{ count: 0 }]; // while adding comments
+      newPost.postLikes = [];
+      newPost.comments = [{ count: 0 }];
       setPosts((prevPosts) => [newPost, ...prevPosts]);
+    }
+
+    if (payload.eventType == "DELETE" && payload?.old?.id) {
+      setPosts((prevPosts) => {
+        let updatedPosts = prevPosts.filter(
+          (post) => post.id != payload.old.id
+        );
+        return updatedPosts;
+      });
+    }
+
+    if (payload.eventType == "UPDATE" && payload?.new?.id) {
+      setPosts((prevPosts) => {
+        let updatedPosts = prevPosts.map((post) => {
+          if (post.id == payload.new.id) {
+            post.body = payload.new.body;
+            post.file = payload.new.file;
+          }
+          return post;
+        });
+        return updatedPosts;
+      });
+    }
+  };
+
+  const handleNewNotification = (payload) => {
+    if (payload.eventType == "INSERT" && payload?.new?.id) {
+      setNotificationCount((prev) => prev + 1);
     }
   };
 
   useEffect(() => {
-    // listen all events on a table
     let postChannel = supabase
       .channel("posts")
       .on(
@@ -46,16 +70,32 @@ const HomeScreen = () => {
       )
       .subscribe();
 
-    getPosts();
+    let notificationChannel = supabase
+      .channel("notifications")
+      .on(
+        "postgres_changes",
+        {
+          event: "INSERT",
+          schema: "public",
+          table: "notifications",
+          filter: `receiverId=eq.${user.id}`,
+        },
+        handleNewNotification
+      )
+      .subscribe();
 
     return () => {
       supabase.removeChannel(postChannel);
+      supabase.removeChannel(notificationChannel);
     };
   }, []);
 
   const getPosts = async () => {
-    let res = await fetchPosts();
+    if (!hasMore) return null;
+    limit = limit + 10;
+    let res = await fetchPosts(limit);
     if (res.success) {
+      if (posts.length == res.data.length) setHasMore(false);
       setPosts(res.data);
     }
   };
@@ -69,13 +109,23 @@ const HomeScreen = () => {
             <Text style={styles.title}>SocialBloom</Text>
           </Pressable>
           <View style={styles.icons}>
-            <Pressable onPress={() => {}}>
+            <Pressable
+              onPress={() => {
+                setNotificationCount(0);
+                router.push("/(main)/notifications");
+              }}
+            >
               <Icon
                 name="heart"
                 size={hp(3.2)}
                 strokeWidth={2}
                 color={theme.colors.text}
               />
+              {notificationCount > 0 && (
+                <View style={styles.pill}>
+                  <Text style={styles.pillText}>{notificationCount}</Text>
+                </View>
+              )}
             </Pressable>
             <Pressable onPress={() => router.push("/(main)/newPost")}>
               <Icon
@@ -86,14 +136,6 @@ const HomeScreen = () => {
               />
             </Pressable>
             <Pressable onPress={() => router.push("/(main)/profile")}>
-              {/* Icon For User & Open User Profile From Icon  */}
-              {/* <Icon
-                name="user"
-                size={hp(3.2)}
-                strokeWidth={2}
-                color={theme.colors.text}
-              /> */}
-
               <Avatar
                 uri={user?.image}
                 size={hp(4.3)}
@@ -111,12 +153,23 @@ const HomeScreen = () => {
           contentContainerStyle={styles.listStyle}
           keyExtractor={(item, index) => item.id.toString()}
           renderItem={({ item }) => (
-            <PostCard item={item} currentUser={user} />
+            <PostCard item={item} currentUser={user} router={router} />
           )}
           onEndReached={() => {
             getPosts();
-            console.log("got to the end");
           }}
+          onEndReachedThreshold={0}
+          ListFooterComponent={
+            hasMore ? (
+              <View style={{ marginVertical: posts.length == 0 ? 200 : 30 }}>
+                <Loading />
+              </View>
+            ) : (
+              <View style={{ marginVertical: 30 }}>
+                <Text style={styles.noPosts}>No more posts</Text>
+              </View>
+            )
+          }
         />
       </View>
     </ScreenWrapper>

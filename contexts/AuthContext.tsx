@@ -1,17 +1,15 @@
 import React, { createContext, useState, useContext } from "react";
 
-// Define the shape of your context
 interface AuthContextType {
-  user: any; // Replace 'any' with a specific type if you know the user structure
-  setAuth: (authUser: any) => void; // Replace 'any' if you know the type for 'authUser'
-  setUserData: (userData: any) => void; // Replace 'any' with the user data type
+  user: any; 
+  setAuth: (authUser: any) => void; 
+  setUserData: (userData: any) => void; 
 }
 
-// Provide a default value for context (can be null or a placeholder)
 const AuthContext = createContext<AuthContextType | null>(null);
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [user, setUser] = useState<any>(null); // Replace 'any' with specific user type if known
+  const [user, setUser] = useState<any>(null); 
 
   const setAuth = (authUser: any) => {
     setUser(authUser);

@@ -6,9 +6,9 @@ import { theme } from "../constants/theme";
 import BackButton from "./BackButton";
 
 interface HeaderProps {
-  title?: string; // Title is optional, default is an empty string
-  showBackButton?: boolean; // Optional, defaults to true
-  mb?: number; // Optional, default is 10
+  title?: string; 
+  showBackButton?: boolean; 
+  mb?: number; 
 }
 
 const Header: React.FC<HeaderProps> = ({

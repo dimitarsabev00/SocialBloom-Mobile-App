@@ -4,9 +4,9 @@ import { theme } from "../constants/theme";
 import { hp } from "../helpers/common";
 
 interface CustomInputProps extends TextInputProps {
-  containerStyle?: ViewStyle; // Style for the container View
-  icon?: React.ReactNode; // Optional icon (React element)
-  inputRef?: RefObject<TextInput>; // Ref for the TextInput
+  containerStyle?: ViewStyle; 
+  icon?: React.ReactNode; 
+  inputRef?: RefObject<TextInput>; 
 }
 
 const CustomInput: React.FC<CustomInputProps> = ({

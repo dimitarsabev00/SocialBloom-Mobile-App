@@ -13,12 +13,12 @@ import { theme } from "../constants/theme";
 import Loading from "./Loading";
 
 type CustomButtonProps = {
-  buttonStyle?: StyleProp<ViewStyle>; // Optional custom style for the button
-  textStyle?: StyleProp<TextStyle>; // Optional custom style for the text
-  title?: string; // Optional button title
-  onPress?: () => void; // Optional callback for the button press
-  loading?: boolean; // Indicates if the button shows a loading indicator
-  hasShadow?: boolean; // Whether the button has a shadow
+  buttonStyle?: StyleProp<ViewStyle>; 
+  textStyle?: StyleProp<TextStyle>; 
+  title?: string; 
+  onPress?: () => void; 
+  loading?: boolean; 
+  hasShadow?: boolean; 
 };
 
 const CustomButton: React.FC<CustomButtonProps> = ({

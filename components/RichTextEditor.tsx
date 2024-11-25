@@ -1,19 +1,20 @@
-import React from "react";
 import { View, Text, StyleSheet } from "react-native";
+import React, { useRef } from "react";
 import { theme } from "../constants/theme";
 import {
   actions,
+  getContentCSS,
   RichEditor,
   RichToolbar,
 } from "react-native-pell-rich-editor";
 
-const RichTextEditor = ({ editorRef, onChange }) => {
+const RichTextEditor = ({ initialValue, editorRef, onChange }) => {
   return (
     <View style={{ minHeight: 285 }}>
       <RichToolbar
         actions={[
-          // actions.undo,
-          // actions.redo,
+          // actions.insertVideo,
+          // actions.insertImage,
           actions.setStrikethrough,
           actions.removeFormat,
           actions.setBold,
@@ -40,6 +41,7 @@ const RichTextEditor = ({ editorRef, onChange }) => {
         style={styles.richBar}
         flatContainerStyle={styles.flatStyle}
         editor={editorRef}
+        // iconSize={22}
         disabled={false}
         // fontSize={handleFontSize}
         selectedIconTint={theme.colors.primaryDark}
@@ -50,6 +52,7 @@ const RichTextEditor = ({ editorRef, onChange }) => {
         editorStyle={styles.contentStyle}
         placeholder={"What's on your mind?"}
         onChange={onChange}
+        // initialContentHTML={'Hello <b>World</b> <p>this is a new paragraph</p> <p>this is another new paragraph</p>'}
         editorInitializedCallback={() => {}}
       />
     </View>
@@ -57,7 +60,6 @@ const RichTextEditor = ({ editorRef, onChange }) => {
 };
 const styles = StyleSheet.create({
   rich: {
-    padding: 5,
     minHeight: 240,
     flex: 1,
     borderWidth: 1.5,
@@ -65,6 +67,7 @@ const styles = StyleSheet.create({
     borderBottomRightRadius: theme.radius.xl,
     borderBottomLeftRadius: theme.radius.xl,
     borderColor: theme.colors.gray,
+    padding: 5,
   },
   contentStyle: {
     color: theme.colors.textDark,

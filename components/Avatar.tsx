@@ -6,10 +6,10 @@ import { Image } from "expo-image";
 import { getUserImageSrc } from "@/services/imageService";
 
 interface AvatarProps {
-  uri: string; // URI must be a string
-  size?: number; // Optional, defaults to hp(4.5)
-  rounded?: number; // Optional, defaults to theme.radius.md
-  style?: StyleProp<ViewStyle>; // Style can be a React Native style object
+  uri: string; 
+  size?: number; 
+  rounded?: number; 
+  style?: StyleProp<ViewStyle>; 
 }
 
 const Avatar: React.FC<AvatarProps> = ({

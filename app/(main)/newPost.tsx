@@ -27,8 +27,6 @@ import Icon from "../../assets/icons";
 const NewPost = () => {
   const { user } = useAuth();
   const post = useLocalSearchParams();
-  console.log("post: ", post);
-  // const videoRef = useRef(null);
   const [file, setFile] = useState(null);
   const bodyRef = useRef("");
   const [loading, setLoading] = useState(false);
@@ -45,7 +43,7 @@ const NewPost = () => {
   }, []);
 
   const onPick = async (isImage) => {
-    // No permissions request is necessary for launching the image library
+   
     let mediaConfig = {
       mediaTypes: "Images",
       allowsEditing: true,
@@ -64,13 +62,11 @@ const NewPost = () => {
     let result = await ImagePicker.launchImageLibraryAsync(mediaConfig);
 
     if (!result.canceled) {
-      // console.log({...result.assets[0]});
       setFile(result.assets[0]);
     }
   };
 
   const onSubmit = async () => {
-    // validate data
     if (!bodyRef.current && !file) {
       Alert.alert("Post", "Please choose an image or add post body!");
       return;
@@ -104,15 +100,12 @@ const NewPost = () => {
   };
 
   const getFileType = (file) => {
-    if (!file) return null; // No file, no type.
+    if (!file) return null; 
 
     if (isLocalFile(file)) {
-      // Use MIME type for local files to determine type
       return file.type.startsWith("video/") ? "video" : "image";
     }
 
-    // Fallback for remote files (e.g., URLs), assuming a naming convention.
-    // Improve this further if you have a reliable way to determine file type for URLs.
     return file.includes("postImages") ? "image" : "video";
   };
 
@@ -201,13 +194,11 @@ const NewPost = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    // backgroundColor: 'red',
     marginBottom: 30,
     paddingHorizontal: wp(4),
     gap: 15,
   },
   title: {
-    // marginBottom: 10,
     fontSize: hp(2.5),
     fontWeight: theme.fonts.semibold,
     color: theme.colors.text,
@@ -237,9 +228,7 @@ const styles = StyleSheet.create({
     color: theme.colors.textLight,
   },
 
-  textEditor: {
-    // marginTop: 10,
-  },
+  textEditor: {},
 
   media: {
     flexDirection: "row",
@@ -264,9 +253,7 @@ const styles = StyleSheet.create({
     color: theme.colors.text,
   },
   imageIcon: {
-    // backgroundColor: theme.colors.gray,
     borderRadius: theme.radius.md,
-    // padding: 6,
   },
   file: {
     height: hp(30),

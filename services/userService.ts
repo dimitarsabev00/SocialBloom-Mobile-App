@@ -13,7 +13,6 @@ export const getUserData = async (userId: string) => {
     }
     return { success: true, data };
   } catch (error: any) {
-    console.log("got error: ", error);
     return { success: false, msg: error.message };
   }
 };
@@ -30,7 +29,6 @@ export const updateUser = async (userId: string, data) => {
     }
     return { success: true };
   } catch (error: any) {
-    console.log("got error: ", error);
     return { success: false, msg: error.message };
   }
 };

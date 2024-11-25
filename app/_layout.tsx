@@ -16,14 +16,11 @@ const InnerRootLayout = () => {
   const { setAuth, setUserData } = useAuth();
 
   useEffect(() => {
-    // Monitor auth state changes
     const { data: subscription } = supabase.auth.onAuthStateChange(
       (event, session) => {
-        console.log("Session:", session?.user?.id);
-
         if (session) {
           setAuth(session.user);
-          updateUserData(session?.user); // update user like image, phone, bio
+          updateUserData(session?.user);
           router.replace("/(main)/home");
         } else {
           setAuth(null);
@@ -32,7 +29,6 @@ const InnerRootLayout = () => {
       }
     );
 
-    // Cleanup the subscription
     return subscription;
   }, []);
 

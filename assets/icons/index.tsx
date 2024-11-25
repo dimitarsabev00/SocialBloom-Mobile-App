@@ -48,11 +48,11 @@ const icons = {
 };
 
 interface IconProps {
-  name: keyof typeof icons; // Restrict `name` to the keys of `icons`
-  size?: number; // Optional size prop
-  strokeWidth?: number; // Optional stroke width prop
-  color?: string; // Optional color prop
-  [key: string]: any; // Allow additional props (e.g., `style`, `className`)
+  name: keyof typeof icons;
+  size?: number; 
+  strokeWidth?: number; 
+  color?: string; 
+  [key: string]: any; 
 }
 
 const Icon: React.FC<IconProps> = ({

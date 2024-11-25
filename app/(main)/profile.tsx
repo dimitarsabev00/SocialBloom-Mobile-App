@@ -1,4 +1,3 @@
-import React from "react";
 import {
   View,
   Text,
@@ -6,19 +5,41 @@ import {
   Pressable,
   TouchableOpacity,
   Alert,
+  FlatList,
 } from "react-native";
-import { hp } from "../../helpers/common";
+import React, { useState } from "react";
+import { hp, wp } from "../../helpers/common";
 import { useAuth } from "../../contexts/AuthContext";
 import { theme } from "../../constants/theme";
-import { router } from "expo-router";
+import { useRouter } from "expo-router";
+import { getUserImageSrc } from "../../services/imageService";
+import { Image } from "expo-image";
 import Header from "../../components/Header";
 import ScreenWrapper from "../../components/ScreenWrapper";
 import Icon from "../../assets/icons";
 import Avatar from "../../components/Avatar";
 import { supabase } from "../../lib/supabase";
+import { fetchPosts } from "../../services/postService";
+import PostCard from "../../components/PostCard";
+import Loading from "../../components/Loading";
 
+var limit = 0;
 const Profile = () => {
   const { user, setAuth } = useAuth();
+  const router = useRouter();
+  const [posts, setPosts] = useState([]);
+  const [hasMore, setHasMore] = useState(true);
+
+  const getPosts = async () => {
+    if (!hasMore) return null;
+
+    limit = limit + 10;
+    let res = await fetchPosts(limit, user.id);
+    if (res.success) {
+      if (posts.length == res.data.length) setHasMore(false);
+      setPosts(res.data);
+    }
+  };
 
   const onLogout = async () => {
     setAuth(null);
@@ -45,7 +66,35 @@ const Profile = () => {
 
   return (
     <ScreenWrapper bg="white">
-      <UserHeader user={user} handleLogout={handleLogout} router={router} />
+      {/* posts */}
+      <FlatList
+        data={posts}
+        ListHeaderComponent={
+          <UserHeader user={user} handleLogout={handleLogout} router={router} />
+        }
+        ListHeaderComponentStyle={{ marginBottom: 30 }}
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={styles.listStyle}
+        keyExtractor={(item, index) => item.id.toString()}
+        renderItem={({ item }) => (
+          <PostCard item={item} currentUser={user} router={router} />
+        )}
+        onEndReached={() => {
+          getPosts();
+        }}
+        onEndReachedThreshold={0}
+        ListFooterComponent={
+          hasMore ? (
+            <View style={{ marginTop: posts.length == 0 ? 100 : 30 }}>
+              <Loading />
+            </View>
+          ) : (
+            <View style={{ marginVertical: 30 }}>
+              <Text style={styles.noPosts}>No more posts</Text>
+            </View>
+          )
+        }
+      />
     </ScreenWrapper>
   );
 };
@@ -60,10 +109,10 @@ interface User {
 }
 
 interface UserHeaderProps {
-  user: User; // Defines the user object structure
-  handleLogout: () => void; // Function for handling logout
+  user: User;
+  handleLogout: () => void;
   router: {
-    push: (path: string) => void; // Router object with a push method
+    push: (path: string) => void;
   };
 }
 
@@ -73,7 +122,7 @@ const UserHeader: React.FC<UserHeaderProps> = ({
   router,
 }) => {
   return (
-    <View style={{ flex: 1, backgroundColor: "white", marginHorizontal: 10 }}>
+    <View style={{ flex: 1, backgroundColor: "white" }}>
       <View>
         <Header title="Profile" mb={30} />
         <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
@@ -90,9 +139,10 @@ const UserHeader: React.FC<UserHeaderProps> = ({
               size={hp(12)}
               rounded={theme.radius.xxl * 1.4}
             />
+            {/* <Image source={getUserImageSrc(user?.image)} style={styles.avatar} /> */}
             <Pressable
               style={styles.editIcon}
-              onPress={() => router.push("/(main)/editProfile")}
+              onPress={() => router.push("/editProfile")}
             >
               <Icon name="edit" strokeWidth={2.5} size={20} />
             </Pressable>
@@ -135,6 +185,14 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
+  headerContainer: {
+    marginHorizontal: wp(4),
+    marginBottom: 20,
+  },
+  headerShape: {
+    width: wp(100),
+    height: hp(20),
+  },
   avatarContainer: {
     height: hp(12),
     width: hp(12),
@@ -175,6 +233,15 @@ const styles = StyleSheet.create({
     padding: 5,
     borderRadius: theme.radius.sm,
     backgroundColor: "#fee2e2",
+  },
+  listStyle: {
+    paddingHorizontal: wp(4),
+    paddingBottom: 30,
+  },
+  noPosts: {
+    fontSize: hp(2),
+    textAlign: "center",
+    color: theme.colors.text,
   },
 });
 
